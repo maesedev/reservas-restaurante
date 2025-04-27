@@ -83,7 +83,7 @@ La cedula del usuario ademas debe corresponder a la que se encuentra en el JWT
 
 
 ## Eliminacion de reserva
-```POST /api/v1/update/reserva```
+```Delete /api/v1/delete/reserva```
 
 ```JSON
 {
