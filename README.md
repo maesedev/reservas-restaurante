@@ -1,5 +1,7 @@
 # reservas-restaurante
-Crea Reservas usando un frontend y BFF en modo de Rest API con Springboot
+Solucion informatica para crear Reservas usando un frontend y BFF en modo de Rest API con Springboot.
+
+Con capacidad de creacion de usuarios que puedan crear sus propias reservas y validar disponiblidad desde la comodidad de su casa
 
 
 # API Endpoints
