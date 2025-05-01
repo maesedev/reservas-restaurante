@@ -75,12 +75,27 @@ const ReservasPage = () => {
             ) : (
                 <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {reservas.map((reserva, index) => {
+                        const [fecha, hora] = reserva.fechaHora.split("T");
+
+                        const [year, month, day] = fecha.split("-").map(Number);
+                        const [hour, minute] = hora.split(":").map(Number);
+                        
+                        // month - 1 porque en JS los meses van 0–11
+                        const combinedDateTime = new Date(Date.UTC(
+                          year,
+                          month - 1,
+                          day,
+                          hour,
+                          minute
+                        ));
+
                         const fechaHorario = new Date(reserva.fechaHora);
-                        const fechaFormateada = fechaHorario.toLocaleDateString("es-ES", {
+                        const fechaFormateada = combinedDateTime.toLocaleDateString("es-ES", {
                             weekday: "long",
                             day: "numeric",
                             month: "long",
                         });
+
                         const horaFormateada = fechaHorario.toLocaleTimeString("es-ES", {
                             hour: "2-digit",
                             minute: "2-digit",

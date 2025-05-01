@@ -20,7 +20,6 @@ const LoginPage: React.FC = () => {
     if (sessionJWT) {
       console.log("Token encontrado, verificando sesión...");
       const payload = getSessionPayload();
-      console.log(payload);
       
       if (payload && payload.exp && payload.exp * 1000 > Date.now()) {
         console.log("Sesión válida, redirigiendo a Home...");
@@ -46,7 +45,6 @@ const LoginPage: React.FC = () => {
     if (!isSuccess) {
       setError("Credenciales inválidas.");
     } else {
-      console.log("Login exitoso");
       router.push("/home");
     }
   };
