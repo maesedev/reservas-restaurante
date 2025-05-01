@@ -61,6 +61,15 @@ const ReservasPage = () => {
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             <h1 className="text-3xl font-bold mb-6 text-center">Mis Reservas</h1>
+
+            {/* Botón para crear reserva */}
+            <div className="flex flex-col items-center mb-8 transition-shadow ">
+                <Link href="/home/reservas/crear" >
+                    <button className="text-6xl hover:cursor-pointer hover:opacity-65 text-green-500 font-bold">+</button>
+                </Link> 
+                <span className="mt-2 text-lg">Crear reserva</span>
+            </div>
+
             {reservas.length === 0 ? (
                 <p className="text-center">No tienes reservas.</p>
             ) : (

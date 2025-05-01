@@ -1,5 +1,7 @@
 "use client"
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+
 
 interface Restaurante {
     idRestaurante: number;
@@ -31,8 +33,11 @@ export default function CrearReserva() {
     // Nuevo estado para el modal de éxito.
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [modalMessage, setModalMessage] = useState<string>("");
-
+    const [reservaId, setReservaId] = useState<number | null>(null);
     const fechaCreacionReserva = new Date().toISOString();
+
+    // Router
+    const router = useRouter();
 
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/restaurantes`)
@@ -63,6 +68,15 @@ export default function CrearReserva() {
         }
     }, [selectedRestaurante, fechaHora]);
 
+    useEffect(() => {
+        if (reservaId){
+            setModalMessage(`Reserva creada correctamente (${reservaId})`);
+        }
+        if(reservaId && !modalOpen){
+            router.push("/home/reservas");
+        }
+    },[reservaId, modalOpen]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -92,9 +106,8 @@ export default function CrearReserva() {
             });
             const responseData = await res.json();
             if (responseData.idReserva) {
-                // Abre un modal de éxito
-                setModalMessage(`Reserva creada correctamente (${responseData.idReserva})`);
                 setModalOpen(true);
+                setReservaId(responseData.idReserva);
             } else {
                 setMensaje("Error al crear la reserva.");
             }

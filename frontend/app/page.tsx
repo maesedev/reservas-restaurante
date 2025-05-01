@@ -34,19 +34,19 @@ export default function Main() {
           src="/images/restaurante.avif"
           alt="Gourmet Restaurant"
           fill
-          className="object-cover brightness-75"
+          className="object-cover filter-[brightness(0.5)] "
           priority
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">
           <h1 className="text-5xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">
-            Welcome to <span className="text-emerald-400">Gourmet Haven</span>
+            Bienvenido a <span className="text-emerald-400">Cielo Gourmet</span>
           </h1>
           <p className="max-w-2xl text-lg md:text-2xl mb-8">
-            Experience fine dining crafted by world‑class chefs in an unforgettable ambience.
+            Experiencia de alta cocina al alcance de todos.
           </p>
-          <Link href="/home/resevas"  passHref>
+          <Link href="/home/reservas"  passHref>
             <Button  className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-full px-8 py-3 text-lg font-semibold">
-              Book a Table
+              Reservar ahora
             </Button>
           </Link>
         </div>
@@ -54,7 +54,7 @@ export default function Main() {
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 text-center py-4">
-        © {new Date().getFullYear()} Gourmet Haven. All rights reserved.
+        © {new Date().getFullYear()} Cielo Gourmet. All rights reserved.
       </footer>
     </main>
   );
