@@ -57,7 +57,7 @@ class TokenResponse(BaseModel):
 
 class Reserva(BaseModel):
     id: int
-    cedulaUsuario: str
+    idUsuario: str
     numeroMesa: int
     idRestaurante: int
     cantidadPersonas: int
@@ -69,7 +69,7 @@ class Reserva(BaseModel):
 
 class ReservaCreateRequest(BaseModel):
     cantidadPersonas: int
-    cedulaUsuario: str
+    idUsuario: str
     comentariosAdicionales: str
     estado: str
     fechaCreacionReserva: str
@@ -81,7 +81,7 @@ class ReservaIdRequest(BaseModel):
     idReserva: int
 
 class CedulaRequest(BaseModel):
-    cedulaUsuario: str
+    idUsuario: str
 
 class MesasDisponiblesResponse(BaseModel):
     idRestaurante: int
@@ -141,7 +141,7 @@ def make_jwt(sub: str, name: str, ip: str) -> str:
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 def static_token(ip) -> TokenResponse:
-    return TokenResponse(token=make_jwt("1234567890", "John Doe", ip))
+    return TokenResponse(token=make_jwt("1019012338", "Santiago", ip))
 
 # -----------------------------------------------------------------------------
 # ─────────────────────——— Endpoints ————————
@@ -150,8 +150,11 @@ def static_token(ip) -> TokenResponse:
 def root():
     return {"message": "API mock para reservas de restaurante"}
 
+
 @app.post("/api/v1/login", response_model=TokenResponse)
-def login(_: LoginRequest, request: Request):
+def login(credentials: LoginRequest, request: Request):
+    if credentials.password != "mypass*":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid credentials")
     return static_token(request.client.host)
 
 @app.get("/api/v1/consult/restaurantes", response_model=List[Restaurante])
@@ -199,7 +202,7 @@ def create_reserva(body: ReservaCreateRequest, authorization: str | None = Heade
     new_id = len(reservas) + 1
     reserva = Reserva(
         id=new_id,
-        cedulaUsuario=body.cedulaUsuario,
+        idUsuario=body.idUsuario,
         numeroMesa=body.numeroMesa,
         idRestaurante=body.idRestaurante,
         cantidadPersonas=body.cantidadPersonas,
@@ -232,14 +235,14 @@ def get_reserva(idReserva: int):
     raise HTTPException(status_code=404, detail="Reserva no encontrada")
 
 @app.get("/api/v1/consult/usuario/reservas", response_model=List[Reserva])
-def get_reservas_usuario(cedulaUsuario: str):
+def get_reservas_usuario(idUsuario: str):
     reservas = load_reservas()
-    return [reserva for reserva in reservas if reserva.cedulaUsuario == cedulaUsuario]
+    return [reserva for reserva in reservas if reserva.idUsuario == idUsuario]
 
 @app.post("/api/v1/reservas/usuario", response_model=List[Reserva])
 def reservas_usuario(body: CedulaRequest):
     reservas = load_reservas()
-    return [reserva for reserva in reservas if reserva.cedulaUsuario == body.cedulaUsuario]
+    return [reserva for reserva in reservas if reserva.idUsuario == body.idUsuario]
 
 @app.delete("/api/v1/delete/reserva", status_code=status.HTTP_204_NO_CONTENT)
 def delete_reserva(body: ReservaIdRequest, authorization: str | None = Header(default=None)):

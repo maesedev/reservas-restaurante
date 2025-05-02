@@ -26,7 +26,7 @@ const ReservasPage = () => {
         }
 
         fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/usuario/reservas?cedulaUsuario=${session.sub}`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/usuario/reservas?idUsuario=${session.sub}`,
             {
                 method: "GET",
                 headers: {

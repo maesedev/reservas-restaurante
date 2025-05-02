@@ -1,0 +1,162 @@
+# reservas-restaurante
+Solucion informatica para crear Reservas usando un frontend y BFF en modo de Rest API con Springboot.
+
+Con capacidad de creacion de usuarios que puedan crear sus propias reservas y validar disponiblidad desde la comodidad de su casa
+
+
+# API Endpoints
+
+
+
+## Login de un usuario
+```POST /api/v1/login```
+
+```JSON
+{
+    "email": "juan.perez@example.com",
+    "contraseña": "idb+G1ilxlvhVqaMDGkStJRCClf3m", #hashed por un secreto antes de enviarse al backend
+}
+```
+Esto devolverá un JWT que se validará cada vez que se haga un request que requiera permisos con el schema Bearer. o un 403 en caso de error en las credenciales.
+```JSON
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwicm9sZSI6IlVzZXIiLCJpYXQiOjE3MTQxNTY4MDAsImV4cCI6MTcxNDE2MDQwMH0.phieiSZxjJpnwDjBCa61cxx8uDf_MjGuVCsp3mVGZgk",
+}
+```
+
+
+## Usuario consultado disponibilidad de mesas restaurante
+```GET /api/v1/consult/restaurante/mesas```
+
+```JSON
+{
+    "idRestaurante": 2,
+    "fechaHora": "2023-10-05T19:30:00Z"
+}
+```
+
+respuesta:
+
+```JSON
+{
+    "idRestaurante":2,
+    "id_mesas_disponibles":[12,54,6,1,3,14]
+}
+```
+
+
+
+## Usuario consultado disponibilidad de mesas restaurante
+```GET /api/v1/consult/detail/mesa```
+
+```JSON
+{
+    "idMesa": 21
+}
+```
+
+respuesta:
+
+```JSON
+{
+    "idRestaurante":2,
+    "id_mesas_disponibles":[12,54,6,1,3,14]
+}
+```
+
+
+
+## Usuario creando reserva
+```POST /api/v1/create/reserva```
+
+```JSON
+{
+    "cedulaUsuario": "123456789",
+    "numeroMesa": 5,
+    "idRestaurante": 2,
+    "cantidadPersonas": 4,
+    "estado": "confirmada",
+    "comentariosAdicionales": "Preferencia por mesa cerca de la ventana",
+    "fechaCreacionReserva": "2023-10-01T14:00:00Z",
+    "fechaHora": "2023-10-05T19:30:00Z"
+}
+```
+
+Retorna
+
+```JSON
+{
+    "idReserva": "7asdf7a5as87dfyasd7f86"
+}
+```
+
+
+## Modificacion de una reserva
+```POST /api/v1/update/reserva```
+
+```JSON
+{
+    "idReserva" : 4121,
+    "cedulaUsuario": "123456789",
+    "numeroMesa": 7,
+    "idRestaurante": 2,
+    "cantidadPersonas": 5,
+    "estado": "confirmada",
+    "comentariosAdicionales": "Preferencia por mesa cerca de la ventana con silla para bebé",
+    "fechaModificacionReserva": "2023-10-01T14:35:00Z",
+    "fechaHora": "2023-10-05T19:30:00Z"
+}
+```
+
+
+## Obtener todas las reservas de un usuario
+```GET /api/v1/reservas/usuario```
+
+```JSON
+{
+    "cedulaUsuario": "123456789",
+}
+```
+La cedula del usuario ademas debe corresponder a la que se encuentra en el JWT
+
+
+
+## Eliminacion de reserva
+```Delete /api/v1/delete/reserva```
+
+```JSON
+{
+    "idReserva" : 4121
+}
+```
+
+# Seguridad
+
+## Uso del JWT (Json Web Token)
+Para manejar la seguridad de parte del servidor y no hacer modificaciones indebidas, se hace uso de un JWT, este consigo trae informacion relevante como fecha de creación, fecha de expiracion y como rol del usuario, cedula del usuario, entre otros datos para asi tener una mejor autorización a sus acciones al momento de hacer peticiones.
+
+Payload del JWT
+```JSON
+{
+  "sub": "1234567890", # Cedula del usuario
+  "name": "John Doe",
+  "originIp": "192.168.7.2",
+  "role": "User",  # ["Admin", "User", "Concierge"]
+  "iat": 1714156800, # Fecha de creacion del token
+  "exp": 1714160400 # Fecha de expiracion del toker
+}
+```
+
+De esta manera el frontend podrá usar esta informacion del usuario para rellenar en el frontend, mientras que aunque esta informacion fuera o no correcta, si el JWT no es valido, no podrá realizar acciones en el backend. 
+
+## Acciones de Admin
+* Puede ver todas las reservas de todos los usuarios y modificarlas.
+* Puede crear nuevas reservas como cambiar disponibilidad de mesas, con la limitacion que no puede cambiar la disponibilidad de mesas con reservas ya creadas, para esto tendría que modificarla o eliminarla en su defecto.
+
+## Acciones de un Concierge
+* Puede crear nuevas reservas para otros usuarios.
+* Puede modificar reservas no eliminarlas.
+
+## Acciones de un User
+* Puede crear nuevas reservas para si mismo.
+* Puede modificar o eliminar sus propias reservas.

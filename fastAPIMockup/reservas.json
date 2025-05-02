@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "cedulaUsuario": "1019012338",
+    "idUsuario": "1019012338",
     "numeroMesa": 2,
     "idRestaurante": 1,
     "cantidadPersonas": 1,
@@ -13,7 +13,7 @@
   },
   {
     "id": 2,
-    "cedulaUsuario": "1019012338",
+    "idUsuario": "1019012338",
     "numeroMesa": 2,
     "idRestaurante": 2,
     "cantidadPersonas": 1,
@@ -25,7 +25,7 @@
   },
   {
     "id": 3,
-    "cedulaUsuario": "1019012338",
+    "idUsuario": "1012338",
     "numeroMesa": 3,
     "idRestaurante": 1,
     "cantidadPersonas": 2,
