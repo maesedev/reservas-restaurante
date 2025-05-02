@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "cedulaUsuario": "1019012338",
+    "numeroMesa": 2,
+    "idRestaurante": 1,
+    "cantidadPersonas": 1,
+    "estado": "confirmada",
+    "fechaCreacionReserva": "2025-05-02T15:14:57.401Z",
+    "comentariosAdicionales": "",
+    "fechaModificacionReserva": "2025-05-02T15:15:58.294Z",
+    "fechaHora": "2025-06-05T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "cedulaUsuario": "1019012338",
+    "numeroMesa": 2,
+    "idRestaurante": 2,
+    "cantidadPersonas": 1,
+    "estado": "confirmada",
+    "fechaCreacionReserva": "2025-05-02T15:14:58.375Z",
+    "comentariosAdicionales": "",
+    "fechaModificacionReserva": null,
+    "fechaHora": "2025-06-05T00:00:00.000Z"
+  },
+  {
+    "id": 3,
+    "cedulaUsuario": "1019012338",
+    "numeroMesa": 3,
+    "idRestaurante": 1,
+    "cantidadPersonas": 2,
+    "estado": "confirmada",
+    "fechaCreacionReserva": "2025-05-02T15:15:45.722Z",
+    "comentariosAdicionales": "",
+    "fechaModificacionReserva": null,
+    "fechaHora": "2025-05-30T00:00:00.000Z"
+  }
+]
