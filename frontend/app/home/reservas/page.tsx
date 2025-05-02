@@ -3,19 +3,10 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import useGetSession, { TSessionPayload } from "@/hooks/useGetSession";
-
-type Reserva = {
-    id: string;
-    cedulaUsuario: string;
-    numeroMesa: number;
-    idRestaurante: number;
-    cantidadPersonas: number;
-    estado: string;
-    comentariosAdicionales: string;
-    fechaCreacionReserva: string;
-    fechaModificacionReserva: string;
-    fechaHora: string;
-};
+import { Reserva } from "@/schmea/types";
+import useSearchReserva, { FilterOptions } from "@/hooks/useSearchReserva";
+import { BuscadorReservas } from "@/app/ui/reservas/BuscadorReservas";
+import DropdownFullWidth from "@/app/ui/utils/dropdownFullWidth";
 
 const ReservasPage = () => {
     const { getSessionPayload } = useGetSession();
@@ -23,6 +14,9 @@ const ReservasPage = () => {
     const [reservas, setReservas] = useState<Reserva[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>("");
+    const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
+
+    const filteredReservas = useSearchReserva(reservas, filterOptions);
 
     useEffect(() => {
         if (!session) {
@@ -48,7 +42,24 @@ const ReservasPage = () => {
                 setError(err.message || "Error inesperado");
                 setLoading(false);
             });
-    }, []);
+    }, [session]);
+
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const { name, value } = e.target;
+        setFilterOptions((prev) => ({
+            ...prev,
+            [name]:
+                name === "idRestaurante"
+                    ? value === "" ? undefined : Number(value)
+                    : value,
+        }));
+    };
+
+    const clearFilters = () => {
+        setFilterOptions({});
+    };
 
     if (loading) {
         return <div>Cargando reservas...</div>;
@@ -61,32 +72,41 @@ const ReservasPage = () => {
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             <h1 className="text-3xl font-bold mb-6 text-center">Mis Reservas</h1>
+            
+                {/* Buscador de reservas */}
+            <DropdownFullWidth title="Filtros" >
+            
+                <BuscadorReservas
+                    filterOptions={filterOptions}
+                    handleInputChange={handleInputChange}
+                    clearFilters={clearFilters}
+                />
+            </DropdownFullWidth>
 
             {/* Botón para crear reserva */}
-            <div className="flex flex-col items-center mb-8 transition-shadow ">
-                <Link href="/home/reservas/crear" >
+            <div className="flex flex-col items-center mb-8 transition-shadow">
+                <Link href="/home/reservas/crear">
                     <button className="text-6xl hover:cursor-pointer hover:opacity-65 text-green-500 font-bold">+</button>
-                </Link> 
+                </Link>
                 <span className="mt-2 text-lg">Crear reserva</span>
             </div>
 
-            {reservas.length === 0 ? (
-                <p className="text-center">No tienes reservas.</p>
+            {filteredReservas.length === 0 ? (
+                <p className="text-center">No hay reservas que coincidan con los filtros.</p>
             ) : (
                 <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                    {reservas.map((reserva, index) => {
+                    {filteredReservas.map((reserva, index) => {
                         const [fecha, hora] = reserva.fechaHora.split("T");
-
                         const [year, month, day] = fecha.split("-").map(Number);
                         const [hour, minute] = hora.split(":").map(Number);
                         
                         // month - 1 porque en JS los meses van 0–11
                         const combinedDateTime = new Date(Date.UTC(
-                          year,
-                          month - 1,
-                          day,
-                          hour,
-                          minute
+                            year,
+                            month - 1,
+                            day,
+                            hour,
+                            minute
                         ));
 
                         const fechaHorario = new Date(reserva.fechaHora);
