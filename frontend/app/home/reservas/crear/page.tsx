@@ -45,7 +45,15 @@ export default function CrearReserva() {
     const router = useRouter();
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/restaurantes`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/restaurantes`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("SESSION_JWT")}`,
+                },
+            }
+        )
             .then((res) => res.json())
             .then((data) => setRestaurantes(data))
             .catch((err) => console.error("Error consultando restaurantes:", err));
@@ -63,7 +71,14 @@ export default function CrearReserva() {
             }
             fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/restaurante/mesas?idRestaurante=${selectedRestaurante}&fechaHora=${fechaHora}`
-            )
+                ,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("SESSION_JWT")}`,
+                    },
+                })
                 .then((res) => res.json())
                 .then((data: MesasResponse) => setMesas(data.mesasDisponibles || []))
                 .catch((err) => {

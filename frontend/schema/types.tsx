@@ -1,7 +1,7 @@
 
 export type Reserva = {
     id: string;
-    cedulaUsuario: string;
+    idUsuario: string;
     numeroMesa: number;
     idRestaurante: number;
     cantidadPersonas: number;

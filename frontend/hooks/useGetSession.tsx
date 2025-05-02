@@ -1,26 +1,30 @@
+// hooks/useGetSession.tsx
 "use client";
+
+import { useState, useEffect } from "react";
 import {jwtDecode} from "jwt-decode";
 
-const useGetSession = () => {
-    const getSessionPayload = () => {
-        const token = localStorage.getItem("SESSION_JWT");
-        if (!token) {
-            return null;
-        }
-        try {
-            const payload = jwtDecode(token);
-            
-            return payload;
-        } catch (error) {
-            console.error("Invalid JWT token:", error);
-            return null;
-        }
-    };
+export default function useGetSession() {
+  const [session, setSession] = useState<TSessionPayload | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    return { getSessionPayload };
-};
+  useEffect(() => {
+    // Solo en cliente
+    if (typeof window === "undefined") return;
 
-export default useGetSession;
+    const token = localStorage.getItem("SESSION_JWT");
+    if (token) {
+      try {
+        setSession(jwtDecode<TSessionPayload>(token));
+      } catch {
+        setSession(null);
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  return { session, loading };
+}
 
 export type TSessionPayload = {
     name: string;

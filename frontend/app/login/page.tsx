@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useLogin from "@/hooks/useLogin";
@@ -6,44 +7,34 @@ import useGetSession from "@/hooks/useGetSession";
 
 const LoginPage: React.FC = () => {
   const { login } = useLogin();
-  const { getSessionPayload } = useGetSession();
+  const { session, loading } = useGetSession();    // ya tenemos loading + session
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [loadingRequest, setLoadingRequest] = useState(false);
 
+  // 1) Cuando loading termine y haya session, redirige
   useEffect(() => {
-    const sessionJWT = localStorage.getItem("SESSION_JWT");
-    if (sessionJWT) {
-      console.log("Token encontrado, verificando sesión...");
-      const payload = getSessionPayload();
-      
-      if (payload && payload.exp && payload.exp * 1000 > Date.now()) {
-        console.log("Sesión válida, redirigiendo a Home...");
-        router.push("/home");
-        return;
-      } else {
-        console.log("Token encontrado, pero inválido o expirado.");
-      }
+    if (!loading && session) {
+      router.push("/home");
     }
-    setCheckingAuth(false);
-  }, [getSessionPayload, router]);
+  }, [loading, session, router]);
 
-  if (checkingAuth) return null;
+  // 2) Mientras validamos la sesión o estamos ya autenticados, no mostramos el form
+  if (loading || session) return null;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
+    setLoadingRequest(true);
     setError(null);
 
     const isSuccess = await login(email, password);
-    setLoading(false);
+    setLoadingRequest(false);
 
     if (!isSuccess) {
-      setError("Credenciales inválidas.");
+      setError("Invalid credentials.");
     } else {
       router.push("/home");
     }
@@ -69,7 +60,7 @@ const LoginPage: React.FC = () => {
           </div>
           <div className="mb-4">
             <label htmlFor="password" className="block mb-1 font-medium">
-              Contraseña:
+              Password:
             </label>
             <input
               id="password"
@@ -87,10 +78,10 @@ const LoginPage: React.FC = () => {
           )}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loadingRequest}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {loading ? "Ingresando..." : "Ingresar"}
+            {loadingRequest ? "Logging in..." : "Log in"}
           </button>
         </form>
       </div>

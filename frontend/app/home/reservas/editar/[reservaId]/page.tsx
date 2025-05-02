@@ -40,7 +40,15 @@ export default function EditarReserva() {
 
     // Fetch initial data de restaurantes
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/restaurantes`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/restaurantes`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("SESSION_JWT")}`,
+                },
+            }
+        )
             .then((res) => res.json())
             .then((data) => setRestaurantes(data))
             .catch((err) =>
@@ -53,7 +61,14 @@ export default function EditarReserva() {
         if (!reservaId) return;
         fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/reserva?idReserva=${reservaId}`
-        )
+        ,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("SESSION_JWT")}`,
+            },
+        })
             .then((res) => {
                 if (!res.ok) {
                     throw new Error("Error al cargar la reserva");
@@ -94,7 +109,14 @@ export default function EditarReserva() {
             }
             fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/restaurante/mesas?idRestaurante=${selectedRestaurante}&fechaHora=${fechaHora}`
-            )
+                ,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("SESSION_JWT")}`,
+                    },
+                })
                 .then((res) => res.json())
                 .then((data: MesasResponse) =>
                     setMesas(data.mesasDisponibles || [])

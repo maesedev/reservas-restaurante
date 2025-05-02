@@ -31,7 +31,53 @@ Con capacidad de creacion de usuarios que puedan crear sus propias reservas y va
     "contraseña": "idb+G1ilxlvhVqaMDGkStJRCClf3m", #hashed por un secreto antes de enviarse al backend
 }
 ```
-Esto devolverá un JWT que se validará cada vez que se haga un request que requiera permisos con el schema Bearer.
+Esto devolverá un JWT que se validará cada vez que se haga un request que requiera permisos con el schema Bearer. o un 403 en caso de error en las credenciales.
+```JSON
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwicm9sZSI6IlVzZXIiLCJpYXQiOjE3MTQxNTY4MDAsImV4cCI6MTcxNDE2MDQwMH0.phieiSZxjJpnwDjBCa61cxx8uDf_MjGuVCsp3mVGZgk",
+}
+```
+
+
+## Usuario consultado disponibilidad de mesas restaurante
+```GET /api/v1/consult/restaurante/mesas```
+
+```JSON
+{
+    "idRestaurante": 2,
+    "fechaHora": "2023-10-05T19:30:00Z"
+}
+```
+
+respuesta:
+
+```JSON
+{
+    "idRestaurante":2,
+    "id_mesas_disponibles":[12,54,6,1,3,14]
+}
+```
+
+
+
+## Usuario consultado disponibilidad de mesas restaurante
+```GET /api/v1/consult/detail/mesa```
+
+```JSON
+{
+    "idMesa": 21
+}
+```
+
+respuesta:
+
+```JSON
+{
+    "idRestaurante":2,
+    "id_mesas_disponibles":[12,54,6,1,3,14]
+}
+```
+
 
 
 ## Usuario creando reserva
@@ -50,6 +96,13 @@ Esto devolverá un JWT que se validará cada vez que se haga un request que requ
 }
 ```
 
+Retorna
+
+```JSON
+{
+    "idReserva": "7asdf7a5as87dfyasd7f86"
+}
+```
 
 
 ## Modificacion de una reserva
@@ -71,7 +124,7 @@ Esto devolverá un JWT que se validará cada vez que se haga un request que requ
 
 
 ## Obtener todas las reservas de un usuario
-```POST /api/v1/reservas/usuario```
+```GET /api/v1/reservas/usuario```
 
 ```JSON
 {
@@ -101,6 +154,7 @@ Payload del JWT
 {
   "sub": "1234567890", # Cedula del usuario
   "name": "John Doe",
+  "originIp": "192.168.7.2",
   "role": "User",  # ["Admin", "User", "Concierge"]
   "iat": 1714156800, # Fecha de creacion del token
   "exp": 1714160400 # Fecha de expiracion del toker

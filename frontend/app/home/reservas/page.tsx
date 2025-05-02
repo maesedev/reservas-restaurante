@@ -1,16 +1,16 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import useGetSession, { TSessionPayload } from "@/hooks/useGetSession";
-import { Reserva } from "@/schmea/types";
+import { Reserva } from "@/schema/types";
 import useSearchReserva, { FilterOptions } from "@/hooks/useSearchReserva";
 import { BuscadorReservas } from "@/app/ui/reservas/BuscadorReservas";
 import DropdownFullWidth from "@/app/ui/utils/dropdownFullWidth";
+import { useSession } from "@/lib/SessionContext";
+import useGetJWT from "@/hooks/useGetJWT";
 
 const ReservasPage = () => {
-    const { getSessionPayload } = useGetSession();
-    const session = getSessionPayload() as TSessionPayload | null;
+    const {session} = useSession();
+    const {getToken} = useGetJWT();
     const [reservas, setReservas] = useState<Reserva[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>("");
@@ -26,7 +26,14 @@ const ReservasPage = () => {
         }
 
         fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/usuario/reservas?cedulaUsuario=${session.sub}`
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/consult/usuario/reservas?cedulaUsuario=${session.sub}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            }
         )
             .then((response) => {
                 if (!response.ok) {
@@ -69,13 +76,31 @@ const ReservasPage = () => {
         return <div>Error: {error}</div>;
     }
 
+    // Si no existen reservas, muestra solo el texto "No tienes reservas"
+    if (reservas.length === 0) {
+        return (
+        <div>
+
+            {/* Botón para crear reserva */}
+            <div className="flex flex-col items-center mb-8 transition-shadow">
+                <Link href="/home/reservas/crear">
+                    <button className="text-6xl hover:cursor-pointer hover:opacity-65 text-green-500 font-bold">+</button>
+                </Link>
+                <span className="mt-2 text-lg">Crear reserva</span>
+            </div>
+            <div className="p-6 bg-gray-50 min-h-screen flex items-center justify-center">
+                <p className="text-center text-xl">No tienes reservas</p>
+            </div>
+        </div>
+        );
+    }
+
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             <h1 className="text-3xl font-bold mb-6 text-center">Mis Reservas</h1>
-            
-                {/* Buscador de reservas */}
-            <DropdownFullWidth title="Filtros" >
-            
+
+            {/* Buscador de reservas */}
+            <DropdownFullWidth title="Busqueda avanzada">
                 <BuscadorReservas
                     filterOptions={filterOptions}
                     handleInputChange={handleInputChange}
@@ -100,7 +125,7 @@ const ReservasPage = () => {
                         const [year, month, day] = fecha.split("-").map(Number);
                         const [hour, minute] = hora.split(":").map(Number);
                         
-                        // month - 1 porque en JS los meses van 0–11
+                        // month - 1 porque en JS los meses van de 0 a 11
                         const combinedDateTime = new Date(Date.UTC(
                             year,
                             month - 1,

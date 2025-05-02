@@ -1,12 +1,12 @@
-// app/page.tsx
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from "@/app/ui/button";
+"use client";
+import { useSession } from '@/lib/SessionContext';
 
 export default function Home() {
-  const username = "Usuario"; // Reemplaza esto con el nombre real del usuario
 
+
+  const {session} = useSession(); // Reemplaza esto con el nombre real del usuario
+  const username = session?.name || "Usuario"; // Asegúrate de que el nombre del usuario esté disponible en la sesión
   return (
     <div className="h-[80vh] md:min-h-screen  flex flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-8">
       <div className="bg-white rounded-lg shadow-lg p-32 text-center">

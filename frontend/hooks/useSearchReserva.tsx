@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { Reserva } from "@/schmea/types";
+import { Reserva } from "@/schema/types";
 
 export interface FilterOptions {
     cedula?: string;
@@ -30,8 +30,11 @@ export default function useSearchReserva(
 
     return useMemo(() => {
         return reservas.filter((reserva) => {
+
+            console.log("reserva", reserva);
+            
             // Filtrar por cedula (búsqueda parcial)
-            if (cedula && !reserva.cedulaUsuario.includes(cedula)) {
+            if (cedula && !reserva.idUsuario?.toString().includes(cedula)) {
                 return false;
             }
 
